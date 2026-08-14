@@ -38,6 +38,7 @@
 function start(loai) {
   applyLoai(loai);
   renderKho();
+  renderTinhTrang();
 
   show($('frm'), true);
   // MAX_PHOTOS = 0 ⇒ không giới hạn. Câu chữ đổi hẳn chứ không in số 0 ra màn hình.
