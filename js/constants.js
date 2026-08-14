@@ -15,7 +15,7 @@ var LOAI = '';        // 'xuat' | 'nhap' — đọc từ ?loai= trên URL hoặc
  *    là form cho chọn giá trị mà server từ chối.
  */
 var KHO = '';
-var DS_KHO = ['Hà Nội 02', 'Dương Xá'];
+var DS_KHO = ['Đông Anh', 'Long Biên', 'Thanh Oai'];
 
 /**
  * Chữ hiển thị theo loại phiếu.
