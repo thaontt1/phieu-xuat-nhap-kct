@@ -18,6 +18,12 @@ var KHO = '';
 var DS_KHO = ['Đông Anh', 'Long Biên', 'Thanh Oai'];
 
 /**
+ * Tình trạng seal lúc lập phiếu — thêm 14/08, người lập phiếu tự chọn.
+ * ⚠️ Giữ khớp ĐÚNG CHUỖI với OPT_TINH_TRANG trong apps_script/Code.gs.
+ */
+var DS_TINH_TRANG = ['Nguyên seal', 'Không có seal'];
+
+/**
  * Chữ hiển thị theo loại phiếu.
  *
  * Toàn bộ khác biệt giữa phiếu XUẤT và phiếu NHẬP nằm gọn trong bảng này —
