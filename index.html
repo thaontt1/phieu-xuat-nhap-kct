@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Phiếu xuất / nhập hàng</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <div class="hdr-mark">GHN</div>
+    <div class="hdr-txt">
+      <h1 id="hdrTitle">Phiếu xuất / nhập hàng</h1>
+      <p class="hdr-sub" id="hdrSub">Chọn loại phiếu để bắt đầu</p>
+    </div>
+    <span class="hdr-badge" id="hdrBadge" hidden></span>
+  </header>
+
+  <!-- Màn chọn loại phiếu — CHỈ hiện khi mở link trần (không có ?loai=).
+       Quét đúng tem QR thì vào thẳng form, không thấy màn này. -->
+  <div class="pick" id="pick" hidden>
+    <h2>Bạn muốn lập phiếu nào?</h2>
+    <p>Bình thường quét đúng tem QR là vào thẳng — màn này chỉ hiện khi mở link chung.</p>
+    <div class="pick-btns">
+      <button type="button" class="pick-btn xuat" data-loai="xuat">
+        <span class="ico">📤</span>
+        <span><strong>PHIẾU XUẤT</strong><small>Xe rời kho — ghi tỉnh xuất, người xuất</small></span>
+      </button>
+      <button type="button" class="pick-btn nhap" data-loai="nhap">
+        <span class="ico">📥</span>
+        <span><strong>PHIẾU NHẬP</strong><small>Xe về kho — ghi tỉnh nhập, người nhập</small></span>
+      </button>
+    </div>
+  </div>
+
+  <form id="frm" novalidate hidden>
+
+    <!-- ------------------------------------------------------ chuyến xe -->
+    <section class="card">
+      <h2>Thông tin chuyến</h2>
+
+      <div class="field">
+        <label for="maChuyenDi">Mã chuyến đi <span class="req">*</span></label>
+        <div class="scan-row">
+          <input id="maChuyenDi" type="text" autocapitalize="characters"
+                 placeholder="VD: E260802JR101CLD" required>
+          <button type="button" class="btn-scan" data-scan="maChuyenDi"
+                  aria-label="Quét mã vạch mã chuyến đi">📷</button>
+        </div>
+        <p class="hint">Bấm 📷 để quét mã vạch trên chứng từ thay vì gõ tay.</p>
+        <p class="hint" id="scanHint" hidden>⚠️ Máy này không dùng được camera — nhập tay giúp mình.</p>
+      </div>
+
+      <div class="field">
+        <label for="bienSoXe">Biển số xe <span class="req">*</span></label>
+        <input id="bienSoXe" type="text" autocapitalize="characters"
+               placeholder="VD: 50E-21576" required>
+      </div>
+
+      <div class="field">
+        <label for="sealXe">Seal xe <span class="req">*</span></label>
+        <div class="scan-row">
+          <input id="sealXe" type="text" autocapitalize="characters"
+                 placeholder="VD: 0524019227" required>
+          <button type="button" class="btn-scan" data-scan="sealXe"
+                  aria-label="Quét mã vạch seal xe">📷</button>
+        </div>
+        <p class="hint">Quét được mã vạch trên seal thì bấm 📷 cho nhanh và khỏi sai số.</p>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------ kho / người -->
+    <section class="card">
+      <h2 id="hdrKhoiKho">Nơi thực hiện</h2>
+
+      <!-- Kho: có ở cụm HN02 + Dương Xá, KHÔNG có ở bản HY01.
+           Hai kho dùng chung một Sheet và một cặp nhóm Telegram nên đây là thứ
+           duy nhất tách được số liệu. Để trống là chặn gửi (máy + server). -->
+      <div class="field">
+        <label for="kho">Kho <span class="req">*</span></label>
+        <select id="kho" required>
+          <option value="">— Chọn kho —</option>
+        </select>
+        <p class="hint" id="khoHint">Quét đúng tem QR dán tại kho thì ô này tự điền sẵn.</p>
+      </div>
+
+      <div class="field">
+        <label for="cua">Cửa <span class="req">*</span></label>
+        <input id="cua" type="text" autocapitalize="characters"
+               placeholder="VD: A09" required>
+      </div>
+
+      <div class="field">
+        <label for="tinh" id="lblTinh">Tỉnh <span class="req">*</span></label>
+        <input id="tinh" type="text" placeholder="VD: Thái Bình" required>
+      </div>
+
+      <div class="field">
+        <label for="nguoi" id="lblNguoi">Người thực hiện <span class="req">*</span></label>
+        <input id="nguoi" type="text" placeholder="Họ tên" required>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------- ảnh -->
+    <section class="card">
+      <h2>Ảnh kèm theo</h2>
+      <p class="hint top">
+        Không bắt buộc. <span id="maxPhotoTxt">Không giới hạn số ảnh</span> — ảnh được nén trước khi gửi.
+      </p>
+      <div class="pick-row">
+        <label class="btn-file" for="photoCam">📷 Chụp ảnh</label>
+        <label class="btn-file" for="photoLib">🖼 Chọn từ thư viện</label>
+      </div>
+      <input id="photoCam" type="file" accept="image/*" capture="environment" multiple hidden>
+      <input id="photoLib" type="file" accept="image/*" multiple hidden>
+      <div class="thumbs" id="thumbs"></div>
+    </section>
+
+    <!-- ---------------------------------------------------------- ghi chú -->
+    <section class="card">
+      <h2>Ghi chú</h2>
+      <textarea id="ghiChu" rows="2" placeholder="Không bắt buộc"></textarea>
+    </section>
+
+    <div id="errBox" class="err" hidden></div>
+
+    <button type="submit" class="btn-submit" id="btnSubmit">GỬI PHIẾU</button>
+    <p class="foot">Dữ liệu lưu vào Google Sheet và gửi lên nhóm Telegram ngay sau khi gửi.</p>
+  </form>
+
+  <!-- ------------------------------------------------------ màn kết quả -->
+  <div class="done" id="done" hidden>
+    <div class="done-icon">✅</div>
+    <h2>Đã gửi phiếu</h2>
+    <p class="done-code" id="doneCode"></p>
+    <div id="doneWarn" class="warn" hidden></div>
+    <a id="doneTg" class="btn-link" target="_blank" rel="noopener" hidden>💬 Mở phiếu trên Telegram</a>
+    <button type="button" class="btn-ghost" id="btnAgain">Lập phiếu khác</button>
+  </div>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="spinner"></div>
+    <p id="overlayTxt">Đang gửi…</p>
+  </div>
+
+  <!-- -------------------------------------------------- máy quét mã vạch -->
+  <div class="scanner" id="scanner" hidden>
+    <video id="scanVideo" playsinline muted autoplay></video>
+    <div class="scan-frame">
+      <div class="scan-ok" id="scanOk" hidden>
+        <span class="scan-ok-tick">✓</span>
+        <span class="scan-ok-code" id="scanOkCode"></span>
+      </div>
+    </div>
+    <p class="scan-tip" id="scanTip">Đang mở camera…</p>
+    <p class="scan-got" id="scanGot" hidden></p>
+    <!-- Zoom: đòn bẩy lớn nhất với mã 1D. Chỉ hiện khi máy cho chỉnh. -->
+    <div class="scan-zoom" id="scanZoom" hidden>
+      <button type="button" id="btnZoomOut" aria-label="Thu nhỏ">−</button>
+      <span id="zoomVal">1.0×</span>
+      <button type="button" id="btnZoomIn" aria-label="Phóng to">+</button>
+    </div>
+    <button type="button" class="btn-torch" id="btnTorch" data-on="0"
+            aria-label="Bật tắt đèn" hidden>🔦</button>
+    <div class="scan-actions">
+      <button type="button" class="btn-scan-shot" id="btnScanShot">📸 Chụp để quét</button>
+      <button type="button" class="btn-scan-cancel" id="btnScanCancel">Huỷ</button>
+    </div>
+    <input id="scanShot" type="file" accept="image/*" capture="environment" hidden>
+  </div>
+</div>
+
+<script src="js/vendor/zxing.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/constants.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/scan.js"></script>
+<script src="js/form.js"></script>
+<script src="js/init.js"></script>
+</body>
+</html>

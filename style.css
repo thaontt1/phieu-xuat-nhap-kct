@@ -1,0 +1,284 @@
+/* PHIẾU XUẤT / NHẬP HÀNG — giao diện điện thoại.
+   Kế thừa từ app Biên bản sự cố, đã BỎ: chữ ký tay, khối lựa chọn sự cố
+   (seal/xe/hàng hoá), nhãn Bên A-B. Thêm: màn chọn loại phiếu + huy hiệu XUẤT/NHẬP. */
+
+:root{
+  --accent:#F26522; --navy:#0B1F3A;
+  --bg:#F4F5F7; --surface:#FFFFFF; --surface-2:#FAFBFC;
+  --ink-1:#14213D; --ink-2:#4A5568; --ink-3:#94A3B8;
+  --line:#E7EAEE; --line-2:#EEF1F4;
+  --ok:#16A34A; --warn:#F59E0B; --danger:#DC2626;
+  --ok-bg:#E9F7EF; --warn-bg:#FEF6E7; --danger-bg:#FDECEC;
+  --xuat:#C2410C; --nhap:#0369A1;
+  --radius:12px; --radius-sm:8px;
+  --shadow-sm:0 1px 2px rgba(20,33,61,.04), 0 1px 3px rgba(20,33,61,.06);
+}
+*{box-sizing:border-box}
+
+/* Thuộc tính hidden PHẢI thắng mọi display của class bên dưới.
+   Thiếu dòng này thì .overlay{display:flex} ghi đè [hidden] của trình duyệt
+   → lớp "Đang gửi…" hiện ngay khi vừa mở trang. */
+[hidden]{display:none!important}
+
+body{
+  margin:0; background:var(--bg); color:var(--ink-1);
+  font:14px/1.5 'Segoe UI',Roboto,Tahoma,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:640px;margin:0 auto;padding:0 12px 40px}
+
+/* ---------------------------------------------------------------- header */
+.hdr{
+  display:flex;align-items:center;gap:12px;
+  background:var(--navy);color:#fff;
+  margin:0 -12px 14px;padding:14px 16px;
+  position:sticky;top:0;z-index:10;
+}
+.hdr-mark{
+  width:40px;height:40px;flex:0 0 40px;border-radius:10px;
+  background:var(--accent);display:grid;place-items:center;
+  font-weight:800;font-size:15px;
+}
+/* min-width:0 để khối chữ CO LẠI được thay vì đẩy huy hiệu ra ngoài.
+   Thiếu nó thì trên máy hẹp tiêu đề xuống 2 dòng và chen vào huy hiệu. */
+.hdr-txt{min-width:0}
+.hdr h1{margin:0;font-size:15px;font-weight:700;line-height:1.3}
+.hdr-sub{
+  margin:2px 0 0;font-size:11.5px;color:#AEBED2;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* Huy hiệu loại phiếu — người khai phải thấy NGAY đang lập phiếu xuất hay nhập.
+   Hai màu tách bạch để liếc là biết, không phải đọc chữ.
+   nowrap: chữ "PHIẾU XUẤT" vỡ 2 dòng thì huy hiệu cao gấp đôi, phá cả thanh đầu. */
+.hdr-badge{
+  margin-left:auto;flex:0 0 auto;
+  padding:6px 11px;border-radius:999px;white-space:nowrap;
+  font-size:11px;font-weight:800;letter-spacing:.5px;
+  background:rgba(255,255,255,.14);color:#fff;
+}
+.hdr-badge.xuat{background:var(--xuat)}
+.hdr-badge.nhap{background:var(--nhap)}
+
+/* ------------------------------------------------- màn chọn loại phiếu */
+/* Chỉ hiện khi mở link trần (không có ?loai=). Người quét đúng tem sẽ
+   không bao giờ thấy màn này — nó là lưới an toàn, không phải bước thường. */
+.pick{padding:22px 4px}
+.pick h2{margin:0 0 6px;font-size:16px;color:var(--ink-1)}
+.pick p{margin:0 0 18px;font-size:13px;color:var(--ink-2)}
+.pick-btns{display:flex;flex-direction:column;gap:12px}
+.pick-btn{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 16px;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--surface);box-shadow:var(--shadow-sm);
+  font:inherit;text-align:left;cursor:pointer;width:100%;
+}
+.pick-btn .ico{font-size:30px;line-height:1}
+.pick-btn strong{display:block;font-size:16px;color:var(--ink-1)}
+.pick-btn small{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
+.pick-btn.xuat{border-left:5px solid var(--xuat)}
+.pick-btn.nhap{border-left:5px solid var(--nhap)}
+
+/* ----------------------------------------------------------------- card */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;margin-bottom:12px;box-shadow:var(--shadow-sm);
+}
+.card h2{
+  margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink-1);
+  text-transform:uppercase;letter-spacing:.4px;
+  display:flex;align-items:center;gap:8px;
+}
+.req{color:var(--accent)}
+.hint{margin:5px 0 0;font-size:11.5px;color:var(--ink-3)}
+.hint.top{margin:-4px 0 10px}
+
+/* ---------------------------------------------------------------- field */
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+/* Liệt kê ĐỦ mọi type đang dùng. Sót một type là ô đó rơi về giao diện mặc
+   định của trình duyệt — hẹp, viền khác hẳn phần còn lại. Thêm ô mới thì
+   nhớ bổ sung vào đây (bài học ô type=tel bên app biên bản). */
+input[type=text],input[type=tel],select,textarea{
+  width:100%;padding:11px 12px;font:inherit;font-size:15px;
+  color:var(--ink-1);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+}
+input[type=text]:focus,input[type=tel]:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--accent);background:#fff;
+}
+textarea{resize:vertical}
+.invalid{border-color:var(--danger)!important;background:var(--danger-bg)!important}
+
+/* ------------------------------------------------- quét mã vạch */
+.scan-row{display:flex;gap:8px;align-items:stretch}
+.scan-row input{flex:1;min-width:0}
+.btn-scan{
+  flex:0 0 52px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--navy);color:#fff;font-size:20px;line-height:1;cursor:pointer;
+}
+.btn-scan:disabled{background:var(--surface-2);color:var(--ink-3);cursor:not-allowed}
+
+.scanner{
+  position:fixed;inset:0;z-index:60;background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.scanner video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+/* Khung ngắm — mã vạch dài nên khung rộng và thấp.
+   Rộng gần hết bề ngang vì vòng dò cắt NGUYÊN bề ngang khung hình (chỉ xén
+   trên/dưới) — khung hẹp sẽ khiến người quét tưởng phải nhét mã vào giữa. */
+.scan-frame{
+  position:relative;z-index:1;width:94%;aspect-ratio:5/2;
+  border:3px solid var(--accent);border-radius:12px;
+  box-shadow:0 0 0 9999px rgba(0,0,0,.45);
+}
+
+/* Chỉnh zoom — chỉ hiện khi camera cho chỉnh (xem setupZoom trong scan.js) */
+.scan-zoom{
+  position:absolute;bottom:92px;left:0;right:0;z-index:2;
+  display:flex;gap:14px;align-items:center;justify-content:center;
+}
+.scan-zoom button{
+  width:46px;height:46px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.92);color:var(--ink-1);
+  font:inherit;font-size:22px;font-weight:700;line-height:1;cursor:pointer;
+}
+.scan-zoom span{
+  min-width:56px;text-align:center;color:#fff;font-size:14px;font-weight:700;
+  text-shadow:0 1px 3px rgba(0,0,0,.8);
+}
+/* Báo đã nhận mã — hiện đè giữa KHUNG NGẮM rồi tự tắt (xem flashOk trong scan.js).
+   Phải nằm trong .scan-frame: để ngoài mà canh giữa màn hình thì lệch so với
+   khung, chip mã đè lên viền (đã dính một lần bên app biên bản). */
+.scan-ok{
+  position:absolute;inset:0;z-index:3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  pointer-events:none;
+  animation:scanOkPop .45s ease-out;
+}
+/* 88px + gap 10 + chip mã ~32 = 130px, lọt gọn trong khung ngắm cao ~146px.
+   To hơn nữa là chip mã đè lên viền khung — đã dính, đừng tăng lại. */
+.scan-ok-tick{
+  width:88px;height:88px;border-radius:50%;
+  background:var(--ok);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;line-height:1;font-weight:700;
+  box-shadow:0 0 0 9px rgba(22,163,74,.28);
+}
+.scan-ok-code{
+  padding:7px 14px;border-radius:var(--radius-sm);
+  background:rgba(0,0,0,.72);color:#fff;
+  font-size:15px;font-weight:700;letter-spacing:.5px;
+}
+.scan-ok.dup .scan-ok-tick{
+  background:var(--warn);box-shadow:0 0 0 9px rgba(245,158,11,.28);font-size:46px;
+}
+@keyframes scanOkPop{
+  0%   {opacity:0;transform:scale(.72)}
+  55%  {opacity:1;transform:scale(1.06)}
+  100% {opacity:1;transform:scale(1)}
+}
+.btn-torch{
+  position:absolute;top:16px;right:16px;z-index:2;
+  width:46px;height:46px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.92);font-size:20px;line-height:1;cursor:pointer;
+}
+.btn-torch[data-on="1"]{background:var(--accent)}
+.scan-tip{
+  position:relative;z-index:1;margin:18px 0 0;padding:0 24px;
+  color:#fff;font-size:14px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.8);
+}
+.scan-actions{
+  position:absolute;bottom:28px;left:0;right:0;z-index:2;
+  display:flex;gap:10px;justify-content:center;padding:0 16px;
+}
+.scan-actions button{
+  flex:0 1 auto;padding:13px 22px;border:0;border-radius:var(--radius-sm);
+  font:inherit;font-size:15px;font-weight:700;cursor:pointer;
+}
+.btn-scan-shot{background:var(--accent);color:#fff}
+.btn-scan-cancel{background:#fff;color:var(--ink-1)}
+
+/* Dòng báo mã vừa quét — giữ lại cho chế độ quét liên tiếp (scan.js dùng chung) */
+.scan-got{
+  position:absolute;top:18px;left:16px;right:16px;z-index:2;margin:0;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  background:rgba(0,0,0,.72);color:#fff;font-size:13px;font-weight:600;
+  text-align:center;
+}
+
+/* ----------------------------------------------------------------- ảnh */
+.pick-row{display:flex;gap:8px}
+.pick-row .btn-file{flex:1}
+.btn-file{
+  display:block;text-align:center;padding:12px;cursor:pointer;
+  background:var(--surface-2);border:1.5px dashed var(--line);
+  border-radius:var(--radius-sm);font-size:14px;font-weight:600;color:var(--ink-2);
+}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.thumb{position:relative;width:76px;height:76px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb button{
+  position:absolute;top:2px;right:2px;width:22px;height:22px;
+  border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;
+  font-size:14px;line-height:1;cursor:pointer;
+}
+
+/* ---------------------------------------------------------------- nút */
+.btn-submit{
+  width:100%;padding:15px;margin-top:4px;
+  background:var(--accent);color:#fff;border:0;border-radius:var(--radius-sm);
+  font:inherit;font-size:15px;font-weight:800;letter-spacing:.5px;cursor:pointer;
+}
+.btn-submit:disabled{opacity:.55}
+.btn-ghost{
+  width:100%;padding:13px;margin-top:10px;
+  background:var(--surface);color:var(--ink-2);
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+}
+.btn-link{
+  display:block;text-align:center;padding:13px;margin-top:12px;
+  background:var(--navy);color:#fff;text-decoration:none;
+  border-radius:var(--radius-sm);font-size:14px;font-weight:600;
+}
+.foot{margin:10px 0 0;font-size:11.5px;color:var(--ink-3);text-align:center}
+
+/* ------------------------------------------------------- lỗi / kết quả */
+.err{
+  background:var(--danger-bg);border:1px solid #F5C2C2;color:#8A1F1F;
+  border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:12px;
+  font-size:13px;white-space:pre-line;
+}
+.warn{
+  background:var(--warn-bg);border:1px solid #F3DFAE;color:#8A5A00;
+  border-radius:var(--radius-sm);padding:11px 13px;margin:12px 0 0;
+  font-size:12.5px;white-space:pre-line;text-align:left;
+}
+.done{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px 18px;text-align:center;box-shadow:var(--shadow-sm);
+}
+.done-icon{font-size:44px;line-height:1}
+.done h2{margin:10px 0 4px;font-size:17px;color:var(--ok)}
+.done-code{margin:0;font-size:13px;color:var(--ink-2)}
+
+/* -------------------------------------------------------------- overlay */
+.overlay{
+  position:fixed;inset:0;z-index:50;background:rgba(11,31,58,.75);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  color:#fff;font-size:14px;padding:20px;text-align:center;
+}
+.spinner{
+  width:38px;height:38px;border:3px solid rgba(255,255,255,.25);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (min-width:560px){
+  .wrap{padding:0 16px 40px}
+  .hdr{margin:0 -16px 16px}
+}
