@@ -282,3 +282,19 @@ textarea{resize:vertical}
   .wrap{padding:0 16px 40px}
   .hdr{margin:0 -16px 16px}
 }
+
+.input-suffix {
+  position: relative;
+}
+.input-suffix input {
+  padding-right: 36px; /* chừa chỗ cho dấu % không đè lên số đang gõ */
+}
+.input-suffix-text {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;       /* xám nhạt, không nổi hơn chữ số người dùng gõ */
+  font-weight: 600;
+  pointer-events: none; /* bấm xuyên qua được, không chặn click vào input */
+}
