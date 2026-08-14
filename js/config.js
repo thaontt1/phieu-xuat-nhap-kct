@@ -26,7 +26,7 @@ var CONFIG = {
   //    HUONG_DAN_TUNG_BUOC.md) thì dán URL /exec vào đây rồi mới push repo.
   //    TUYỆT ĐỐI không dán URL của HY01 vào — phiếu 2 kho mới sẽ chạy vào Sheet
   //    và nhóm Telegram của HY01 mà KHÔNG báo lỗi gì.
-  API_URL: 'CHUA_DIEN_URL_APPS_SCRIPT',
+  API_URL: 'https://script.google.com/macros/s/AKfycbz-HmL62BmKbu7wNPMoON_jUsh-BNRDxteOX5DIx6dHu6Xz4akFQmNzxoWanvnFj1ag/exec',
 
   // 0 = không giới hạn số ảnh.
   // ⚠️ Trang này KHÔNG hỏi backend lúc mở ⇒ con số này độc lập với MAX_PHOTOS trong
