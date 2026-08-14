@@ -23,9 +23,12 @@ function applyLoai(loai) {
   badge.className = 'hdr-badge ' + LOAI;
   show(badge, true);
 
-  $('hdrKhoiKho').textContent = n.khoi;
+$('hdrKhoiKho').textContent = n.khoi;
 
-  // Nhãn có dấu * bắt buộc — dựng lại cả phần <span> để không mất dấu sao.
+  // Phiếu nhập: ẩn hẳn ô Tỉnh — chỉ phiếu xuất mới cần ghi rõ xuất đi tỉnh nào.
+  show($('fieldTinh'), LOAI !== 'nhap');
+  $('tinh').required = (LOAI !== 'nhap');
+
   $('lblTinh').innerHTML = escHtml(n.tinh) + ' <span class="req">*</span>';
   $('lblNguoi').innerHTML = escHtml(n.nguoi) + ' <span class="req">*</span>';
   $('tinh').placeholder = n.phVeTinh;
@@ -104,7 +107,7 @@ function validateClient(p) {
   need('bienSoXe', 'Biển số xe');
   need('sealXe', 'Seal xe');
   need('cua', 'Cửa');
-  need('tinh', n.tinh);
+  if (LOAI !== 'nhap') need('tinh', n.tinh); // Phiếu nhập: ô Tỉnh đã ẩn hẳn, không kiểm.
   need('nguoi', n.nguoi);
 
   if (['xuat', 'nhap'].indexOf(p.loai) < 0) {
