@@ -67,6 +67,16 @@ function renderKho() {
   }
 }
 
+function renderTinhTrang() {
+  var sel = $('tinhTrang');
+  DS_TINH_TRANG.forEach(function (v) {
+    var o = document.createElement('option');
+    o.value = v;
+    o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+
 function collect() {
   return {
     loai: LOAI,
@@ -74,6 +84,7 @@ function collect() {
     maChuyenDi: $('maChuyenDi').value.trim().toUpperCase(),
     bienSoXe: $('bienSoXe').value.trim().toUpperCase(),
     sealXe: $('sealXe').value.trim().toUpperCase(),
+    tinhTrang: $('tinhTrang').value.trim(),
     cua: $('cua').value.trim(),
     tinh: $('tinh').value.trim(),
     nguoi: $('nguoi').value.trim(),
@@ -106,6 +117,7 @@ function validateClient(p) {
   need('maChuyenDi', 'Mã chuyến đi');
   need('bienSoXe', 'Biển số xe');
   need('sealXe', 'Seal xe');
+  need('tinhTrang', 'Tình trạng');
   need('cua', 'Cửa');
   if (LOAI !== 'nhap') need('tinh', n.tinh); // Phiếu nhập: ô Tỉnh đã ẩn hẳn, không kiểm.
   need('nguoi', n.nguoi);
