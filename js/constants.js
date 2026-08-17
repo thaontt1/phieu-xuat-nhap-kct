@@ -42,7 +42,7 @@ var NHAN = {
     tinh: 'Tỉnh xuất',
     nguoi: 'Tên người xuất',
     phVeTinh: 'VD: Thái Bình',
-    phVeNguoi: 'Họ tên người xuất hàng'
+    phVeNguoi: 'Tên người xuất hàng'
   },
   nhap: {
     ten: 'PHIẾU NHẬP',
@@ -52,7 +52,7 @@ var NHAN = {
     tinh: 'Tỉnh nhập',
     nguoi: 'Tên người nhập',
     phVeTinh: 'VD: Hải Dương',
-    phVeNguoi: 'Họ tên người nhập hàng'
+    phVeNguoi: 'Tên người nhập hàng'
   }
 };
 
