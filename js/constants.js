@@ -15,7 +15,7 @@ var LOAI = '';        // 'xuat' | 'nhap' — đọc từ ?loai= trên URL hoặc
  *    là form cho chọn giá trị mà server từ chối.
  */
 var KHO = '';
-var DS_KHO = ['Đông Anh', 'Long Biên', 'Thanh Oai'];
+var DS_KHO = ['Đông Anh', 'Long Biên', 'Thanh Oai', 'Dương Xá'];
 
 /**
  * Tình trạng seal lúc lập phiếu — thêm 14/08, người lập phiếu tự chọn.
