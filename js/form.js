@@ -16,7 +16,7 @@ function applyLoai(loai) {
 
   document.title = n.tieuDe + ' — GHN';
   $('hdrTitle').textContent = n.tieuDe;
-  $('hdrSub').textContent = 'Điền 6 ô rồi bấm gửi';
+  $('hdrSub').textContent = 'Điền 9 ô rồi bấm gửi';
 
   var badge = $('hdrBadge');
   badge.textContent = n.icon + ' ' + n.ten;
